@@ -1,1 +1,1 @@
-from finfun.version import *
+import finfun.version
