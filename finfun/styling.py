@@ -40,8 +40,8 @@ def p_format(x, decimals=2):
 
 def currency(df, decimals=0):
     """
-    Given a DataFrame with datetime index returns a DataFrame with european formatting
-    and y-m-d for datetime index.
+    Given a DataFrame with datetime index returns a pandas.io.formats.style.Styler object
+    with european formatting and y-m-d for datetime index.
     :param df: DataFrame to convert
     :param decimals: number of decimals to show
     :return: new formatted DataFrame
@@ -53,8 +53,8 @@ def currency(df, decimals=0):
 
 def percentage(df, decimals=2):
     """
-    Given a DataFrame with datetime index returns a DataFrame with european formatted percentages
-    and y-m-d for datetime index
+    Given a DataFrame with datetime index returns a pandas.io.formats.style.Styler object
+    with european formatted percentages and y-m-d for datetime index.
     :param df: DataFrame to convert
     :param decimals: number of decimals to show
     :return: new formatted DataFrame
