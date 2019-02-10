@@ -1,2 +1,2 @@
-import version
+from version import *
 
