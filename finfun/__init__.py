@@ -1,3 +1,8 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+""" A collection of utilities to do financial calculations. """
+
 import finfun.version
 
 __version__ = version.__version__

@@ -1,9 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-Classes and methods to do styling with pandas DataFrames and Jupyter NoteBooks.
-"""
+""" Classes and methods to do styling with pandas DataFrames and Jupyter NoteBooks. """
 
 
 def color_negative_red(val):
