@@ -10,5 +10,5 @@ setup(
     author='hvdb',
     author_email='',
     description='A collection of utilities to do financial calculations',
-    install_requires=['pandas', 'numpy']
+    install_requires=['pandas', 'numpy', 'Jinja2']
 )
