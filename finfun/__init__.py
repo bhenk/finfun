@@ -1,1 +1,1 @@
-from finfun.version import *
+__version__ = 'bla'
