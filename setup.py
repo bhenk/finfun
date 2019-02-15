@@ -1,11 +1,11 @@
 from setuptools import setup
-import finfun.version as version
+import fintec.version as version
 
 setup(
-    name='finfun',
+    name='fintec',
     version=version.__version__,
-    packages=['finfun'],
-    url='https://github.com/bhenk/finfun',
+    packages=['fintec'],
+    url='https://github.com/bhenk/fintec',
     license='Apache License Version 2.0',
     author='hvdb',
     author_email='',

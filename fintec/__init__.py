@@ -3,10 +3,10 @@
 
 """ A collection of utilities to do financial calculations. """
 
-import finfun.version
+import fintec.version
 
 __version__ = version.__version__
 __release_date__ = version.__release_date__
 #
-from finfun.styling import *
-from finfun.data import *
+from fintec.styling import *
+from fintec.data import *
