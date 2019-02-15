@@ -9,3 +9,4 @@ __version__ = version.__version__
 __release_date__ = version.__release_date__
 #
 from finfun.styling import *
+from finfun.data import *

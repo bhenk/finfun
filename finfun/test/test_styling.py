@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import finfun as ff
 import unittest
 import pandas as pd
