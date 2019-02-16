@@ -52,8 +52,8 @@ def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: STR
     :return: pandas.DataFrame
     """
     df = read_data(filename, index_col, sheet_name)
-    df = df.interpolate(method='nearest', axis=0)
     df.index = pd.to_datetime(df.index)
+    df = df.interpolate(method='nearest', axis=0)
     return df
 
 
