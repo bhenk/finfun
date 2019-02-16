@@ -8,8 +8,8 @@ from typing import Union, Sequence
 
 import pandas as pd
 
-STRINT = Union[str, int]
-IDXCOL = Union[STRINT, Sequence[int], None]
+_STRINT = Union[str, int]
+IDXCOL = Union[_STRINT, Sequence[int], None]
 
 U_FIN_DATA_BASE = 'U_FIN_DATA_BASE'
 """ The environment variable name for the data base directory. """
@@ -26,7 +26,7 @@ def data_path(filename: str) -> str:
     return os.path.join(os.getenv(U_FIN_DATA_BASE, 'data'), filename)
 
 
-def read_data(filename: str, index_col: IDXCOL = 0, sheet_name: STRINT = 0):
+def read_data(filename: str, index_col: IDXCOL = 0, sheet_name: _STRINT = 0):
     """
     Read in a DataFrame, either from a csv file or an Excel file.
 
@@ -42,7 +42,7 @@ def read_data(filename: str, index_col: IDXCOL = 0, sheet_name: STRINT = 0):
     return df
 
 
-def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: STRINT = 0):
+def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: _STRINT = 0):
     """
     Read data with a datetime index, interpolate nearest.
 
@@ -57,7 +57,7 @@ def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: STR
     return df
 
 
-def df_rates(filename='fondsen.xlsx', index_col: IDXCOL = 0, sheet_name: STRINT = 'koersen') -> pd.DataFrame:
+def df_rates(filename='fondsen.xlsx', index_col: IDXCOL = 0, sheet_name: _STRINT = 'koersen') -> pd.DataFrame:
     """
     Read file filename relative to data_path, sheet 'sheet_name'. The index_col should be of type date.
     Fills NaN's, except leading and trailing. The type of file and how it is read is determined
