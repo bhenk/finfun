@@ -7,8 +7,8 @@ from enum import Enum
 from typing import Union, Sequence
 
 import pandas as pd
+from fintec.core.data import STRINT
 
-STRINT = Union[str, int]
 IDXCOL = Union[STRINT, Sequence[int], None]
 
 U_FIN_DATA_BASE = 'U_FIN_DATA_BASE'
