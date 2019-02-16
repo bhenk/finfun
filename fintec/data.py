@@ -9,13 +9,13 @@ from typing import Union, Sequence
 import pandas as pd
 
 _STRINT = Union[str, int]
-IDXCOL = Union[_STRINT, Sequence[int], None]
+_IDXCOL = Union[_STRINT, Sequence[int], None]
 
 U_FIN_DATA_BASE = 'U_FIN_DATA_BASE'
 """ The environment variable name for the data base directory. """
 
 
-def data_path(filename: str) -> str:
+def _data_path(filename: str) -> str:
     """
     Get the path to file f, relative to the environment variable 'U_FIN_DATA_BASE'.
     If the environment variable is not found uses 'data' as default.
@@ -26,7 +26,7 @@ def data_path(filename: str) -> str:
     return os.path.join(os.getenv(U_FIN_DATA_BASE, 'data'), filename)
 
 
-def read_data(filename: str, index_col: IDXCOL = 0, sheet_name: _STRINT = 0):
+def _read_data(filename: str, index_col: _IDXCOL = 0, sheet_name: _STRINT = 0):
     """
     Read in a DataFrame, either from a csv file or an Excel file.
 
@@ -36,13 +36,13 @@ def read_data(filename: str, index_col: IDXCOL = 0, sheet_name: _STRINT = 0):
     :return: pandas.DataFrame
     """
     if os.path.splitext(filename)[1].lower() == '.csv':
-        df = pd.read_csv(data_path(filename), index_col=index_col)
+        df = pd.read_csv(_data_path(filename), index_col=index_col)
     else:
-        df = pd.read_excel(data_path(filename), sheet_name=sheet_name, index_col=index_col)
+        df = pd.read_excel(_data_path(filename), sheet_name=sheet_name, index_col=index_col)
     return df
 
 
-def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: _STRINT = 0):
+def _read_date_indexed_data(filename: str, index_col: _IDXCOL = 0, sheet_name: _STRINT = 0):
     """
     Read data with a datetime index, interpolate nearest.
 
@@ -51,13 +51,13 @@ def read_date_indexed_data(filename: str, index_col: IDXCOL = 0, sheet_name: _ST
     :param sheet_name: if it is an Excel file, the name or index number of the sheet, default 0
     :return: pandas.DataFrame
     """
-    df = read_data(filename, index_col, sheet_name)
+    df = _read_data(filename, index_col, sheet_name)
     df.index = pd.to_datetime(df.index)
     df = df.interpolate(method='nearest', axis=0)
     return df
 
 
-def df_rates(filename='fondsen.xlsx', index_col: IDXCOL = 0, sheet_name: _STRINT = 'koersen') -> pd.DataFrame:
+def df_rates(filename='fondsen.xlsx', index_col: _IDXCOL = 0, sheet_name: _STRINT = 'koersen') -> pd.DataFrame:
     """
     Read file filename relative to data_path, sheet 'sheet_name'. The index_col should be of type date.
     Fills NaN's, except leading and trailing. The type of file and how it is read is determined
@@ -68,7 +68,7 @@ def df_rates(filename='fondsen.xlsx', index_col: IDXCOL = 0, sheet_name: _STRINT
     :param sheet_name: if it is an Excel file, the name or index number of the sheet, default 'koersen'
     :return: pandas.DataFrame
     """
-    return read_date_indexed_data(filename, index_col, sheet_name)
+    return _read_date_indexed_data(filename, index_col, sheet_name)
 
 
 class Idx(Enum):
@@ -84,7 +84,7 @@ class Idx(Enum):
         return self.name, self.value
 
     def filename(self):
-        return data_path('indices/{}.csv'.format(self.name.lower()))
+        return _data_path('indices/{}.csv'.format(self.name.lower()))
 
     def ic_historical_data_url(self):
         return 'https://www.investing.com/indices/{}-historical-data'.format(self.value)
