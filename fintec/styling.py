@@ -6,6 +6,7 @@ import pandas as pd
 
 __all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage']
 
+
 def color_negative_red(val) -> str:
     """
     Takes a scalar and returns a string with the css property `'color: red'` for negative
@@ -17,7 +18,7 @@ def color_negative_red(val) -> str:
     return 'color: {}'.format(color)
 
 
-def eu_format(number_string: str) -> str:
+def _eu_format(number_string: str) -> str:
     return number_string.replace(',', 'x').replace('.', ',').replace('x', '.')
 
 
@@ -29,7 +30,7 @@ def c_format(x, decimals=0) -> str:
     :return: formatted string representing x
     """
     f = '{{:,.{0}f}}'.format(decimals)
-    return eu_format(f.format(x))
+    return _eu_format(f.format(x))
 
 
 def p_format(x, decimals=2) -> str:
@@ -40,7 +41,7 @@ def p_format(x, decimals=2) -> str:
     :return: formatted string representing x
     """
     f = '{{:,.{0}f}}%'.format(decimals)
-    return eu_format(f.format(x * 100))
+    return _eu_format(f.format(x * 100))
 
 
 def currency(df: pd.DataFrame, decimals=0):

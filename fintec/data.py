@@ -8,7 +8,7 @@ from typing import Union, Sequence
 
 import pandas as pd
 
-__all__ = ['U_FIN_DATA_BASE', 'df_rates']
+__all__ = ['U_FIN_DATA_BASE', 'df_rates', 'Idx']
 
 _STRINT = Union[str, int]
 _IDXCOL = Union[_STRINT, Sequence[int], None]
@@ -74,6 +74,9 @@ def df_rates(filename='fondsen.xlsx', index_col: _IDXCOL = 0, sheet_name: _STRIN
 
 
 class Idx(Enum):
+    """
+    Enumeration of indices.
+    """
     DOW = 'us-30'
     SPX = 'us-spx-500'
     NASDAQ100 = 'nq-100'
@@ -86,11 +89,23 @@ class Idx(Enum):
         return self.name, self.value
 
     def filename(self):
+        """
+        Local filename of the index.
+        :return: filename of the index
+        """
         return _data_path('indices/{}.csv'.format(self.name.lower()))
 
     def ic_historical_data_url(self):
+        """
+        URL of the index history.
+        :return: URL of the index history
+        """
         return 'https://www.investing.com/indices/{}-historical-data'.format(self.value)
 
     def init_file(self):
+        """
+        Local filename of the initial file as downloaded manually.
+        :return: filename of the initial file
+        """
         return 'html/{}.html'.format(self.name.lower())
 
