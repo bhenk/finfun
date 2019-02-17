@@ -93,6 +93,9 @@ class Idx(Enum):
     def describe(self):
         return self.name, self.value
 
+    def long_name(self):
+        return self.long_name
+
     def filename(self):
         """
         Local filename of the index.
