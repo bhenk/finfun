@@ -29,3 +29,16 @@ class TestData(unittest.TestCase):
         self.assertEqual(2, df.msuaf.isna().sum())
         self.assertEqual(3, df.rgfte.isna().sum())
 
+
+class TestIdx(unittest.TestCase):
+
+    def test_for_name(self):
+        idx = ft.Idx.for_name('aex')
+        self.assertEqual(ft.Idx.AEX, idx)
+
+    def test_for_name_with_invalid_para(self):
+        with warnings.catch_warnings(record=True) as w:
+            ft.Idx.for_name('not a name')
+        self.assertTrue(len(w) == 1)
+        self.assertEqual(str(w.pop(0).message), 'No Idx with name "NOT A NAME"')
+        

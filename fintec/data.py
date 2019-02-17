@@ -3,6 +3,7 @@
 
 """ Gathering and manipulating data. """
 import os
+import warnings
 from enum import Enum
 from typing import Union, Sequence
 
@@ -77,13 +78,17 @@ class Idx(Enum):
     """
     Enumeration of indices.
     """
-    DOW = 'us-30'
-    SPX = 'us-spx-500'
-    NASDAQ100 = 'nq-100'
-    AEX = 'netherlands-25'
-    DAX = 'germany-30'
-    FTSE = 'uk-100'
-    SHANGHAI = 'shanghai-composite'
+    DOW = ('Dow Jones Industrial Average (DJI)', 'us-30')
+    SPX = ('Standard & Poor\'s 500 ', 'us-spx-500')
+    NDX = ('National Association of Securities Dealers Automated Quotations', 'nq-100')
+    AEX = ('Amsterdam Exchange Index', 'netherlands-25')
+    DAX = ('Deutscher Aktienindex', 'germany-30')
+    FTSE = ('Financial Times Stock Exchange Index', 'uk-100')
+    SSEC = ('Shanghai Composite', 'shanghai-composite')
+
+    def __init__(self, long_name, ic_name):
+        self.long_name = long_name
+        self.ic_name = ic_name
 
     def describe(self):
         return self.name, self.value
@@ -100,7 +105,7 @@ class Idx(Enum):
         URL of the index history.
         :return: URL of the index history
         """
-        return 'https://www.investing.com/indices/{}-historical-data'.format(self.value)
+        return 'https://www.investing.com/indices/{}-historical-data'.format(self.ic_name)
 
     def init_file(self):
         """
@@ -108,4 +113,18 @@ class Idx(Enum):
         :return: filename of the initial file
         """
         return 'html/{}.html'.format(self.name.lower())
+
+    @classmethod
+    def for_name(cls, name):
+        """
+        Gives the Idx for the given name or None if given name is not an Idx.
+        :param name: name (case insensitive) of the Idx
+        :return: Idx or None if name is not an Idx
+        """
+        nu = name.upper()
+        if nu in cls.__members__:
+            return cls.__members__[nu]
+        else:
+            warnings.warn('No {} with name "{}"'.format(cls.__name__, nu))
+        return None
 
