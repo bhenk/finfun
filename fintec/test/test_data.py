@@ -29,6 +29,13 @@ class TestData(unittest.TestCase):
         self.assertEqual(2, df.msuaf.isna().sum())
         self.assertEqual(3, df.rgfte.isna().sum())
 
+    @unittest.SkipTest
+    def test_update_index(self):
+        df = ft.update_index(ft.Idx.AEX)
+        self.assertIsInstance(df.index, pd.DatetimeIndex)
+        self.assertListEqual(list(df.columns), ['Price', 'Open', 'High', 'Low', 'Vol.', 'Change %'])
+        self.assertTrue((pd.datetime.now() - df.index.max()).days < 4)
+
 
 class TestIdx(unittest.TestCase):
 
@@ -42,3 +49,6 @@ class TestIdx(unittest.TestCase):
         self.assertTrue(len(w) == 1)
         self.assertEqual(str(w.pop(0).message), 'No Idx with name "NOT A NAME"')
         self.assertIsNone(idx)
+
+
+

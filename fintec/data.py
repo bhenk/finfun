@@ -8,8 +8,11 @@ from enum import Enum
 from typing import Union, Sequence
 
 import pandas as pd
+import requests
 
-__all__ = ['U_FIN_DATA_BASE', 'df_rates', 'Idx']
+__all__ = ['U_FIN_DATA_BASE',
+           'df_rates',
+           'Idx', 'update_index', 'update_indices']
 
 _STRINT = Union[str, int]
 _IDXCOL = Union[_STRINT, Sequence[int], None]
@@ -86,31 +89,31 @@ class Idx(Enum):
     FTSE = ('Financial Times Stock Exchange Index', 'uk-100')
     SSEC = ('Shanghai Composite', 'shanghai-composite')
 
-    def __init__(self, long_name, ic_name):
+    def __init__(self, long_name: str, ic_name: str):
         self.long_name = long_name
         self.ic_name = ic_name
 
-    def describe(self):
+    def describe(self) -> (str, str):
         return self.name, self.value
 
-    def long_name(self):
+    def long_name(self) -> str:
         return self.long_name
 
-    def filename(self):
+    def filename(self) -> str:
         """
         Local filename of the index.
         :return: filename of the index
         """
         return _data_path('indices/{}.csv'.format(self.name.lower()))
 
-    def ic_historical_data_url(self):
+    def ic_historical_data_url(self) -> str:
         """
         URL of the index history.
         :return: URL of the index history
         """
         return 'https://www.investing.com/indices/{}-historical-data'.format(self.ic_name)
 
-    def init_file(self):
+    def init_file(self) -> str:
         """
         Local filename of the initial file as downloaded manually.
         :return: filename of the initial file
@@ -118,7 +121,7 @@ class Idx(Enum):
         return 'html/{}.html'.format(self.name.lower())
 
     @classmethod
-    def for_name(cls, name):
+    def for_name(cls, name: str):
         """
         Gives the Idx for the given name or None if given name is not an Idx.
         :param name: name (case insensitive) of the Idx
@@ -131,3 +134,56 @@ class Idx(Enum):
             warnings.warn('No {} with name "{}"'.format(cls.__name__, nu))
         return None
 
+
+def update_index(idx: Idx, days_back: int=20) -> pd.DataFrame:
+    """
+    Update the given index. The maximum number of days back depends on the data table on the source site.
+
+    :param idx: index to update
+    :param days_back: backward synchronizing, number of days back
+    :return: DataFrame with ohlc
+    """
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) '
+                             'Chrome/39.0.2171.95 Safari/537.36'}
+    response = requests.get(idx.ic_historical_data_url(), headers=headers)
+    if response.status_code != 200:
+        raise Exception('Unexpected response status: {}'.format(response.status_code))
+    # old index
+    dfo = pd.read_csv(idx.filename(), index_col=0)
+    dfo.index = pd.to_datetime(dfo.index)
+    dfo = dfo.sort_index()
+    # new index
+    df_tables = pd.read_html(response.text, index_col=0)
+    dfn = df_tables[1]
+    dfn.index = pd.to_datetime(dfn.index)
+    dfn = dfn.sort_index()
+    # concat on last day
+    index = dfo.index[-days_back:][0]
+    dfi = pd.concat([dfo[:-days_back], dfn[index :]], join='inner')
+    dfi.to_csv(idx.filename())
+    print('Updated {}'.format(idx.describe()))
+    return dfi
+
+
+def update_indices(days_back=20):
+    """
+    Update all indices.
+    :param days_back: backward synchronizing, number of days back
+    :return: None
+    """
+    for idx in Idx:
+        update_index(idx, days_back)
+
+
+def initiate_index(idx: Idx) -> pd.DataFrame:
+    """
+    Initiate the given index. Assumes html has been saved manually at idx.init_file().
+    :param idx: the index to initiate
+    :return: DataFrame with ohlc
+    """
+    dfs = pd.read_html(idx.init_file(), index_col=0)
+    dfi = dfs[0]
+    dfi.index = pd.to_datetime(dfi.index)
+    dfi = dfi.sort_index()
+    dfi.to_csv(idx.filename())
+    return dfi
