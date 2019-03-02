@@ -15,7 +15,7 @@ import requests
 
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
-           'Idx', 'update_index', 'update_indices', 'initiate_index',
+           'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices',
            'df_index', 'df_indices', 'df_indices_change']
 
 
