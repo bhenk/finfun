@@ -238,18 +238,19 @@ def initiate_index(idx: Idx, table_index: int = 0, log: bool = True) -> pd.DataF
     return dfi
 
 
-def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0):
+def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0, log: bool = True):
     """
     Initiate the given indices. Assumes html pages have been saved manually at idx.init_file().
     :param indices: the indices to initiate
     :param table_index: index number of the table to read from html
+    :param log: print logging to std.out, default True
     :return: None
     """
     _log.debug('Updating indices')
     if not isinstance(indices, Iterable):
         indices = [indices]
     for idx in indices:
-        initiate_index(idx, table_index=table_index)
+        initiate_index(idx, table_index=table_index, log=log)
 
 
 def __convert_volume__(v: str) -> float:
