@@ -13,6 +13,8 @@ import pandas as pd
 import numpy as np
 import requests
 
+from fintec import styling
+
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
            'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices',
@@ -112,6 +114,7 @@ class Idx(Enum):
     AEX = ('Amsterdam Exchange Index', 'netherlands-25')
     DAX = ('Deutscher Aktienindex', 'germany-30')
     FTSE = ('Financial Times Stock Exchange Index', 'uk-100')
+    STOXX = ('STOXX 600', 'stoxx-600')
     SSEC = ('Shanghai Composite', 'shanghai-composite')
     N225 = ('Nikkei 225', 'japan-ni225')
 
@@ -204,13 +207,15 @@ def update_indices(indices: Union[iter, Idx] = Idx, table_index: int = 1):
         update_index(idx, table_index)
 
 
-def initiate_index(idx: Idx, table_index: int = 0) -> pd.DataFrame:
+def initiate_index(idx: Idx, table_index: int = 0, log: bool = True) -> pd.DataFrame:
     """
     Initiate the given index. Assumes html has been saved manually at idx.init_file().
     :param idx: the index to initiate
     :param table_index: index number of the table to read from html
+    :param log: print logging to std.out, default True
     :return: DataFrame with ohlc
     """
+    if log: styling.start_logging()
     if os.path.exists(idx.filename()):
         _log.info('Not initiating {}. File \'{}\' exists'.format(idx, idx.filename()))
         dfi = pd.read_csv(idx.filename(), index_col=0)
@@ -225,9 +230,11 @@ def initiate_index(idx: Idx, table_index: int = 0) -> pd.DataFrame:
         dfi.to_csv(idx.filename())
         _log.info('Initiated index {}'.format(idx.filename()))
     else:
-        _log.info('Initial file not found: {}'.format(idx.init_file()))
-        warnings.warn('Initial file not found: {}'.format(idx.init_file()))
+        msg = 'Not initiating {}. Initial file not found: {}'.format(idx, idx.init_file())
+        _log.warning(msg)
+        warnings.warn(msg)
         dfi = None
+    if log: styling.end_logging()
     return dfi
 
 

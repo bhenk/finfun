@@ -3,8 +3,26 @@
 
 """ Classes and methods to do styling with pandas DataFrames on Jupyter NoteBooks. """
 import pandas as pd
+import logging, sys
 
-__all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage']
+__all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage',
+           'start_logging', 'end_logging']
+
+__LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
+
+
+def start_logging(level=logging.DEBUG):
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
+    __LOG_CHANNEL__.setFormatter(formatter)
+    __LOG_CHANNEL__.setLevel(level)
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(__LOG_CHANNEL__)
+
+
+def end_logging():
+    root = logging.getLogger()
+    root.removeHandler(__LOG_CHANNEL__)
 
 
 def color_negative_red(val) -> str:
