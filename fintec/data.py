@@ -204,21 +204,45 @@ def update_indices(indices: Union[iter, Idx] = Idx, table_index: int = 1):
         update_index(idx, table_index)
 
 
-def initiate_index(idx: Idx, table_index=0) -> pd.DataFrame:
+def initiate_index(idx: Idx, table_index: int = 0) -> pd.DataFrame:
     """
     Initiate the given index. Assumes html has been saved manually at idx.init_file().
     :param idx: the index to initiate
     :param table_index: index number of the table to read from html
     :return: DataFrame with ohlc
     """
-    _log.info('Initiating index from {}'.format(idx.init_file()))
-    dfs = pd.read_html(idx.init_file(), index_col=0)
-    dfi = dfs[table_index]
-    dfi.index = pd.to_datetime(dfi.index)
-    dfi = dfi.sort_index()
-    dfi.to_csv(idx.filename())
-    _log.info('Initiated index {}'.format(idx.filename()))
+    if os.path.exists(idx.filename()):
+        _log.info('Not initiating {}. File \'{}\' exists'.format(idx, idx.filename()))
+        dfi = pd.read_csv(idx.filename(), index_col=0)
+        dfi.index = pd.to_datetime(dfi.index)
+        dfi = dfi.sort_index()
+    elif os.path.exists(idx.init_file()):
+        _log.info('Initiating index from {}'.format(idx.init_file()))
+        dfs = pd.read_html(idx.init_file(), index_col=0)
+        dfi = dfs[table_index]
+        dfi.index = pd.to_datetime(dfi.index)
+        dfi = dfi.sort_index()
+        dfi.to_csv(idx.filename())
+        _log.info('Initiated index {}'.format(idx.filename()))
+    else:
+        _log.info('Initial file not found: {}'.format(idx.init_file()))
+        warnings.warn('Initial file not found: {}'.format(idx.init_file()))
+        dfi = None
     return dfi
+
+
+def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0):
+    """
+    Initiate the given indices. Assumes html pages have been saved manually at idx.init_file().
+    :param indices: the indices to initiate
+    :param table_index: index number of the table to read from html
+    :return: None
+    """
+    _log.debug('Updating indices')
+    if not isinstance(indices, Iterable):
+        indices = [indices]
+    for idx in indices:
+        initiate_index(idx, table_index=table_index)
 
 
 def __convert_volume__(v: str) -> float:
