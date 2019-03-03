@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 
 """ Gathering and manipulating data. """
-import enum
 import logging
 import os
 import warnings
 from enum import Enum
 from typing import Union, Sequence, Iterable
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 
 from fintec import styling
@@ -246,11 +245,13 @@ def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0, log:
     :param log: print logging to std.out, default True
     :return: None
     """
+    if log: styling.start_logging()
     _log.debug('Updating indices')
     if not isinstance(indices, Iterable):
         indices = [indices]
     for idx in indices:
         initiate_index(idx, table_index=table_index, log=log)
+    if log: styling.end_logging()
 
 
 def __convert_volume__(v: str) -> float:
@@ -303,8 +304,8 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
 
     :param indices: iterable of indices, default Idx
     :param col: which column should be merged in the final frame.
-            one of ['close', 'open', 'high', 'low', 'volume', 'change']
-    :param start start date
+                one of ['close', 'open', 'high', 'low', 'volume', 'change']
+    :param start: start date
     :return: DataFrame with date index, indices represented with column named by col
     """
     _log.debug('Merging column \'{}\' of indices.'.format(col))

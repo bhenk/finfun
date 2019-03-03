@@ -2,16 +2,24 @@
 # -*- coding: utf-8 -*-
 
 """ Classes and methods to do styling with pandas DataFrames on Jupyter NoteBooks. """
+import os
+from logging.handlers import RotatingFileHandler
+
 import pandas as pd
 import logging, sys
 
 __all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage',
-           'start_logging', 'end_logging']
+           'start_logging', 'end_logging', 'initiate_file_logging']
 
 __LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
 
 
 def start_logging(level=logging.DEBUG):
+    """
+    Start logging log messages to stdout.
+    :param level: log level
+    :return: None
+    """
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
     __LOG_CHANNEL__.setFormatter(formatter)
     __LOG_CHANNEL__.setLevel(level)
@@ -21,8 +29,23 @@ def start_logging(level=logging.DEBUG):
 
 
 def end_logging():
+    """
+    Stop logging log messages to stdout.
+    :return: None
+    """
     root = logging.getLogger()
     root.removeHandler(__LOG_CHANNEL__)
+
+
+def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG):
+    path = os.path.dirname(log_file)
+    os.makedirs(path, exist_ok=True)
+    formatter = logging.Formatter('%(asctime)s,%(levelname)s,%(filename)s,%(lineno)d,%(message)s')
+    log_channel = RotatingFileHandler(log_file, maxBytes=1000*1000*1024, backupCount=5, encoding='utf-8')
+    log_channel.setFormatter(formatter)
+    logger = logging.getLogger('file-logger')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(log_channel)
 
 
 def color_negative_red(val) -> str:
