@@ -46,7 +46,6 @@ class CsvFormatter(logging.Formatter):
         self.writer = csv.writer(self.output, quoting=csv.QUOTE_ALL)
 
     def format(self, record):
-        print(record.__dict__)
         time = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S.%f')
         self.writer.writerow([time, record.threadName, record.process, record.levelname, record.filename, record.lineno,
                               record.funcName, record.msg, record.pathname])
