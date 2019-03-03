@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """ Classes and methods to do styling with pandas DataFrames on Jupyter NoteBooks. """
+import csv
 import os
 from logging.handlers import RotatingFileHandler
 
@@ -37,12 +38,26 @@ def end_logging():
     root.removeHandler(__LOG_CHANNEL__)
 
 
+class CsvFormatter(logging.Formatter):
+    def __init__(self):
+        super().__init__()
+        self.output = os.io.StringIO()
+        self.writer = csv.writer(self.output, quoting=csv.QUOTE_ALL)
+
+    def format(self, record):
+        self.writer.writerow([record.asctime, record.levelname, record.filename, record.lineno, record.msg])
+        data = self.output.getvalue()
+        self.output.truncate(0)
+        self.output.seek(0)
+        return data.strip()
+
+
 def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG):
     path = os.path.dirname(log_file)
     os.makedirs(path, exist_ok=True)
-    formatter = logging.Formatter('%(asctime)s,%(levelname)s,%(filename)s,%(lineno)d,%(message)s')
+    #formatter = logging.Formatter('%(asctime)s,%(levelname)s,%(filename)s,%(lineno)d,%(message)s')
     log_channel = RotatingFileHandler(log_file, maxBytes=1000*1000*1024, backupCount=5, encoding='utf-8')
-    log_channel.setFormatter(formatter)
+    log_channel.setFormatter(CsvFormatter())
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     root.addHandler(log_channel)
