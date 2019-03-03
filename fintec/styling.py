@@ -47,20 +47,36 @@ class CsvFormatter(logging.Formatter):
 
     def format(self, record):
         time = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S.%f')
-        self.writer.writerow([time, record.threadName, record.process, record.levelname, record.filename, record.lineno,
-                              record.funcName, record.msg, record.pathname])
+        self.writer.writerow([time, record.threadName, record.process, record.levelname, record.filename,
+                              record.lineno, record.funcName, record.msg, record.pathname])
         data = self.output.getvalue()
         self.output.truncate(0)
         self.output.seek(0)
         return data.strip()
 
 
-def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG):
+def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG, max_bytes=1000 * 1000 * 1024,
+                          backup_count=3, encoding='utf-8'):
+    """
+    Initiate logging to a rotating file. The log file output can be picked up in a DataFrame:
+    ```
+    names = ['date', 'thread', 'process', 'level', 'file', 'line', 'function', 'msg', 'path']
+    df = pd.read_csv('logs/fintec.log', header=None, quoting=1, converters={0: pd.to_datetime}, names=names)
+    ```
+
+    :param log_file: the path or file to write to. Directories will be created.
+    :param level: the log level. one of logging levels
+                logging.DEBUG (10), logging.INFO (20), logging.WARNING (30), logging.ERROR (40), logging.CRITICAL (50)
+    :param max_bytes: max bytes for roll over
+    :param backup_count: how many files are kept
+    :param encoding: encoding of the file
+    :return: None
+    """
     path = os.path.dirname(log_file)
     os.makedirs(path, exist_ok=True)
-    #formatter = logging.Formatter('%(asctime)s,%(levelname)s,%(filename)s,%(lineno)d,%(message)s')
-    log_channel = RotatingFileHandler(log_file, maxBytes=1000*1000*1024, backupCount=5, encoding='utf-8')
+    log_channel = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count, encoding=encoding)
     log_channel.setFormatter(CsvFormatter())
+    log_channel.setLevel(level)
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     root.addHandler(log_channel)
