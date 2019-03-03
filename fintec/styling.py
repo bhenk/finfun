@@ -43,9 +43,9 @@ def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG):
     formatter = logging.Formatter('%(asctime)s,%(levelname)s,%(filename)s,%(lineno)d,%(message)s')
     log_channel = RotatingFileHandler(log_file, maxBytes=1000*1000*1024, backupCount=5, encoding='utf-8')
     log_channel.setFormatter(formatter)
-    logger = logging.getLogger('file-logger')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(log_channel)
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(log_channel)
 
 
 def color_negative_red(val) -> str:
