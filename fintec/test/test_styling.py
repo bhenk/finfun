@@ -1,10 +1,12 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+import logging
 
 import fintec as ft
 import unittest
 import pandas as pd
 
+_log = logging.getLogger(__name__)
 
 class TestStyling(unittest.TestCase):
 
@@ -36,3 +38,7 @@ class TestStyling(unittest.TestCase):
         rendered = dfc.render()
         self.assertTrue('>2019-02-10</th>' in rendered)
         self.assertTrue('>1</td>' in rendered)
+
+    def test_initiate_file_logging(self):
+        ft.initiate_file_logging('../../logs/fintec.log')
+        _log.debug('A new line')

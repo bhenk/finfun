@@ -5,7 +5,7 @@
 import csv
 import os
 from logging.handlers import RotatingFileHandler
-
+from io import StringIO
 import pandas as pd
 import logging, sys
 
@@ -41,11 +41,12 @@ def end_logging():
 class CsvFormatter(logging.Formatter):
     def __init__(self):
         super().__init__()
-        self.output = os.io.StringIO()
+        self.output = StringIO()
         self.writer = csv.writer(self.output, quoting=csv.QUOTE_ALL)
 
     def format(self, record):
-        self.writer.writerow([record.asctime, record.levelname, record.filename, record.lineno, record.msg])
+        #print(record.__dict__)
+        self.writer.writerow([record.created, record.levelname, record.filename, record.lineno, record.msg])
         data = self.output.getvalue()
         self.output.truncate(0)
         self.output.seek(0)
