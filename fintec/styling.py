@@ -3,6 +3,7 @@
 
 """ Classes and methods to do styling with pandas DataFrames on Jupyter NoteBooks. """
 import csv
+import datetime
 import os
 from logging.handlers import RotatingFileHandler
 from io import StringIO
@@ -46,7 +47,8 @@ class CsvFormatter(logging.Formatter):
 
     def format(self, record):
         #print(record.__dict__)
-        self.writer.writerow([record.created, record.levelname, record.filename, record.lineno, record.msg])
+        time = datetime.datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S.%f')
+        self.writer.writerow([time, record.levelname, record.filename, record.lineno, record.msg])
         data = self.output.getvalue()
         self.output.truncate(0)
         self.output.seek(0)
