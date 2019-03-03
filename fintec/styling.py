@@ -11,8 +11,9 @@ import pandas as pd
 import logging, sys
 
 __all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage',
-           'start_logging', 'end_logging', 'initiate_file_logging']
+           'start_logging', 'end_logging', 'initiate_file_logging', 'log']
 
+_log = logging.getLogger(__name__)
 __LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
 
 
@@ -39,6 +40,22 @@ def end_logging():
     root.removeHandler(__LOG_CHANNEL__)
 
 
+def log(func, *args, **kwargs):
+    """
+    Wrapper for functions that want to be logged to stdout. After the function returns, logging is turned of again.
+    :param func: the function to call
+    :param args: arguments for the function
+    :param kwargs: named arguments for the function
+    :return: the return value of the function
+    """
+    start_logging()
+    try:
+        ret_val = func(*args, **kwargs)
+    finally:
+        end_logging()
+    return ret_val
+
+
 class CsvFormatter(logging.Formatter):
     def __init__(self):
         super().__init__()
@@ -58,7 +75,7 @@ class CsvFormatter(logging.Formatter):
 def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG, max_bytes=1000 * 1000 * 1024,
                           backup_count=3, encoding='utf-8'):
     """
-    Initiate logging to a rotating file. The log file output can be picked up in a DataFrame:
+    Initiate logging to a rotating file. If needed, the log file output can be picked up in a DataFrame:
     ```
     names = ['date', 'thread', 'process', 'level', 'file', 'line', 'function', 'msg', 'path']
     df = pd.read_csv('logs/fintec.log', header=None, quoting=1, converters={0: pd.to_datetime}, names=names)
@@ -80,6 +97,7 @@ def initiate_file_logging(log_file='logs/fintec.log', level=logging.DEBUG, max_b
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     root.addHandler(log_channel)
+    _log.debug('Initiated file logging to {}'.format(log_file))
 
 
 def color_negative_red(val) -> str:

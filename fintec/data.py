@@ -195,7 +195,6 @@ def update_indices(indices: Union[iter, Idx] = Idx, table_index: int = 1):
     Update indices.
 
     :param indices: indices to update. Default Idx
-    :param days_back: backward synchronizing, number of days back
     :param table_index: index number of the table to read from html
     :return: None
     """
@@ -206,15 +205,13 @@ def update_indices(indices: Union[iter, Idx] = Idx, table_index: int = 1):
         update_index(idx, table_index)
 
 
-def initiate_index(idx: Idx, table_index: int = 0, log: bool = True) -> pd.DataFrame:
+def initiate_index(idx: Idx, table_index: int = 0) -> pd.DataFrame:
     """
     Initiate the given index. Assumes html has been saved manually at idx.init_file().
     :param idx: the index to initiate
     :param table_index: index number of the table to read from html
-    :param log: print logging to std.out, default True
     :return: DataFrame with ohlc
     """
-    if log: styling.start_logging()
     if os.path.exists(idx.filename()):
         _log.info('Not initiating {}. File \'{}\' exists'.format(idx, idx.filename()))
         dfi = pd.read_csv(idx.filename(), index_col=0)
@@ -233,25 +230,21 @@ def initiate_index(idx: Idx, table_index: int = 0, log: bool = True) -> pd.DataF
         _log.warning(msg)
         warnings.warn(msg)
         dfi = None
-    if log: styling.end_logging()
     return dfi
 
 
-def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0, log: bool = True):
+def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0):
     """
     Initiate the given indices. Assumes html pages have been saved manually at idx.init_file().
     :param indices: the indices to initiate
     :param table_index: index number of the table to read from html
-    :param log: print logging to std.out, default True
     :return: None
     """
-    if log: styling.start_logging()
     _log.debug('Updating indices')
     if not isinstance(indices, Iterable):
         indices = [indices]
     for idx in indices:
-        initiate_index(idx, table_index=table_index, log=log)
-    if log: styling.end_logging()
+        initiate_index(idx, table_index=table_index)
 
 
 def __convert_volume__(v: str) -> float:
@@ -325,7 +318,7 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
     return dfm.loc[strt:]
 
 
-def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2018-01-01'):
+def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01'):
 
     dfm = df_indices(indices, col)
     dfa = pd.merge(pd.DataFrame(index=_all_date_range()), dfm, left_index=True, right_index=True, how='outer') \

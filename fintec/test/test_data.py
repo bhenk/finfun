@@ -11,16 +11,16 @@ import fintec as ft
 
 class TestData(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        # logging:
-        root = logging.getLogger()
-        root.setLevel(logging.DEBUG)
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
-        ch.setFormatter(formatter)
-        root.addHandler(ch)
+    # @classmethod
+    # def setUpClass(cls):
+    #     # logging:
+    #     root = logging.getLogger()
+    #     root.setLevel(logging.DEBUG)
+    #     ch = logging.StreamHandler(sys.stdout)
+    #     ch.setLevel(logging.DEBUG)
+    #     formatter = logging.Formatter('%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s')
+    #     ch.setFormatter(formatter)
+    #     root.addHandler(ch)
 
     def setUp(self):
         warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
@@ -64,6 +64,15 @@ class TestData(unittest.TestCase):
         self.assertIsInstance(df.index, pd.DatetimeIndex)
         self.assertListEqual(list(df.columns), ['AEX', 'DOW'])
         # print(df)
+
+    def test_logging_indices(self):
+        df = ft.log(ft.df_indices, [ft.Idx.AEX, ft.Idx.DOW], col='high')
+        print()
+        print(df.tail())
+        print('no more logging')
+        ft.df_indices([ft.Idx.AEX, ft.Idx.DOW])
+        print('end of function')
+
 
     # def test_df_indices_change(self):
     #     df = ft.df_indices_change(ft.Idx.NDX, start='2019-01-01')
