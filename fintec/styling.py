@@ -11,7 +11,7 @@ import pandas as pd
 import logging, sys
 
 __all__ = ['color_negative_red', 'c_format', 'p_format', 'currency', 'percentage',
-           'start_logging', 'end_logging', 'initiate_file_logging', 'log']
+           'start_logging', 'end_logging', 'initiate_file_logging', 'debug', 'info']
 
 _log = logging.getLogger(__name__)
 __LOG_CHANNEL__ = logging.StreamHandler(sys.stdout)
@@ -40,7 +40,7 @@ def end_logging():
     root.removeHandler(__LOG_CHANNEL__)
 
 
-def log(func, *args, **kwargs):
+def debug(func, *args, **kwargs):
     """
     Wrapper for functions that want to be logged to stdout. After the function returns, logging is turned of again.
     :param func: the function to call
@@ -48,7 +48,23 @@ def log(func, *args, **kwargs):
     :param kwargs: named arguments for the function
     :return: the return value of the function
     """
-    start_logging()
+    start_logging(logging.DEBUG)
+    try:
+        ret_val = func(*args, **kwargs)
+    finally:
+        end_logging()
+    return ret_val
+
+
+def info(func, *args, **kwargs):
+    """
+    Wrapper for functions that want to be logged to stdout. After the function returns, logging is turned of again.
+    :param func: the function to call
+    :param args: arguments for the function
+    :param kwargs: named arguments for the function
+    :return: the return value of the function
+    """
+    start_logging(logging.INFO)
     try:
         ret_val = func(*args, **kwargs)
     finally:

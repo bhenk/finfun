@@ -186,7 +186,7 @@ def update_index(idx: Idx, table_index: int = 1) -> pd.DataFrame:
     lastday = dfn.index[0] + pd.DateOffset(days=-1)
     dfi = pd.concat([dfo[:lastday], dfn], join='inner')
     dfi.to_csv(idx.filename())
-    _log.debug('Updated {}'.format(idx.describe()))
+    _log.info('Updated {}'.format(idx.describe()))
     return dfi
 
 

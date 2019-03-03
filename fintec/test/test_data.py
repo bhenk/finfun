@@ -66,7 +66,9 @@ class TestData(unittest.TestCase):
         # print(df)
 
     def test_logging_indices(self):
-        df = ft.log(ft.df_indices, [ft.Idx.AEX, ft.Idx.DOW], col='high')
+        ft.debug(ft.df_indices, [ft.Idx.AEX, ft.Idx.DOW], col='high')
+        print('\nstop logging level debug')
+        df = ft.info(ft.df_indices, [ft.Idx.AEX, ft.Idx.DOW], col='high')
         print()
         print(df.tail())
         print('no more logging')
