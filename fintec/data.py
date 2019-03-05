@@ -320,12 +320,10 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
 
 def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01'):
 
-    dfm = df_indices(indices, col)
-    dfa = pd.merge(pd.DataFrame(index=_all_date_range()), dfm, left_index=True, right_index=True, how='outer') \
-        .interpolate(method='zero', axis=0)
+    dfm = df_indices(indices, col).interpolate(method='zero', axis=0)
     dt = pd.to_datetime(start)
-    dti = dfa.index[dfa.index.get_loc(dt, method='nearest')]
+    dti = dfm.index[dfm.index.get_loc(dt, method='nearest')]
     strt = '{0:%Y-%m-%d}'.format(dti)
-    df_change = dfa.loc[strt:].diff()
+    df_change = dfm.loc[strt:].diff()
     return df_change
 
