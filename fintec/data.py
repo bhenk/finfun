@@ -319,11 +319,14 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
 
 
 def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01'):
+    """
+    Returns a dataframe with the absolute daily change of indices.
 
-    dfm = df_indices(indices, col).interpolate(method='zero', axis=0)
-    dt = pd.to_datetime(start)
-    dti = dfm.index[dfm.index.get_loc(dt, method='nearest')]
-    strt = '{0:%Y-%m-%d}'.format(dti)
-    df_change = dfm.loc[strt:].diff()
-    return df_change
+    :param indices: iterable of indices, default Idx
+    :param col: which column should be merged in the final frame.
+                one of ['close', 'open', 'high', 'low', 'volume', 'change']
+    :param start: start date
+    :return: DataFrame with date index, absolute daily change of indices
+    """
+    return df_indices(indices, col, start).interpolate(method='zero', axis=0).diff()
 
