@@ -39,6 +39,6 @@ class TestStyling(unittest.TestCase):
         self.assertTrue('>2019-02-10</th>' in rendered)
         self.assertTrue('>1</td>' in rendered)
 
-    def test_initiate_file_logging(self):
-        ft.initiate_file_logging('../../logs/fintec.log')
+    def test_start_file_logging(self):
+        ft.start_file_logging('../../logs/fintec.log')
         _log.debug('A new line')

@@ -151,7 +151,7 @@ def color_negative_red(val) -> str:
     :param val: the scalar
     :return: color css
     """
-    color = 'red' if val < 0 else 'blue'
+    color = 'grey' if pd.isnull(val) else 'red' if val < 0 else 'blue'
     return 'color: {}'.format(color)
 
 
@@ -166,6 +166,7 @@ def c_format(x, decimals=0) -> str:
     :param decimals: number of decimals to show
     :return: formatted string representing x
     """
+    if pd.isnull(x): return '---'
     f = '{{:,.{0}f}}'.format(decimals)
     return _eu_format(f.format(x))
 
@@ -177,6 +178,7 @@ def p_format(x, decimals=2) -> str:
     :param decimals: number of decimals to show
     :return: formatted string representing x
     """
+    if pd.isnull(x): return '---'
     f = '{{:,.{0}f}}%'.format(decimals)
     return _eu_format(f.format(x * 100))
 
