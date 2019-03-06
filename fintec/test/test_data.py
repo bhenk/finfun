@@ -75,9 +75,13 @@ class TestData(unittest.TestCase):
         ft.df_indices([ft.Idx.AEX, ft.Idx.DOW])
         print('end of function')
 
-    def test_df_indices_change(self):
-        df = ft.df_indices_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
+    def test_df_indices_abs_change(self):
+        df = ft.df_indices_abs_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
         self.assertIsInstance(df.index, pd.DatetimeIndex)
+        print(df)
+
+    def test_df_indices_rel_change(self):
+        df = ft.df_indices_rel_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
         print(df)
 
 
