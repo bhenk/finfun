@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-""" Gathering and manipulating data. """
+""" Gathering data. """
 import logging
 import os
 import warnings
@@ -17,7 +17,7 @@ from fintec import styling
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
            'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices',
-           'df_index', 'df_indices', 'df_indices_abs_change', 'df_indices_rel_change']
+           'df_index', 'df_indices', 'df_indices_abs_change', 'df_indices_rel_change', 'df_indices_change']
 
 
 _log = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ U_FIN_DATA_BASE = 'U_FIN_DATA_BASE'
 """ The environment variable name for the data base directory. """
 
 
-def _all_date_range(start_date: str = '2018-01-01') -> pd.date_range:
+def _all_date_range(start_date: str = '2017-01-01') -> pd.date_range:
     """
     Return a date range starting at start_date and ending now inclusive, with frequency Day.
     :param start_date: start date of range
@@ -291,7 +291,7 @@ def df_index(idx: Idx) -> pd.DataFrame:
         .rename(columns=np.unicode.lower)
 
 
-def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2018-01-01') -> pd.DataFrame:
+def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01') -> pd.DataFrame:
     """
     Returns a dataframe with the columns named col from indices.
 
@@ -305,6 +305,7 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
     if not isinstance(indices, Iterable):
         indices = [indices]
     dfm = None
+    _log.debug('Reading {} indices.'.format(len(indices)))
     for idx in indices:
         df = df_index(idx).rename(columns={col: idx.name})
         if dfm is None:
@@ -318,7 +319,8 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
     return dfm.loc[strt:]
 
 
-def df_indices_abs_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01'):
+def df_indices_abs_change(indices: Union[iter, Idx] = Idx, col: str = 'close',
+                          start: str = '2017-01-01') -> pd.DataFrame:
     """
     Returns a dataframe with the absolute daily change of indices.
 
@@ -331,7 +333,8 @@ def df_indices_abs_change(indices: Union[iter, Idx] = Idx, col: str = 'close', s
     return df_indices(indices, col, start).interpolate(method='zero', axis=0).diff()
 
 
-def df_indices_rel_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01'):
+def df_indices_rel_change(indices: Union[iter, Idx] = Idx, col: str = 'close',
+                          start: str = '2017-01-01') -> pd.DataFrame:
     """
     Returns a dataframe with the relative daily change of indices.
 
@@ -343,3 +346,21 @@ def df_indices_rel_change(indices: Union[iter, Idx] = Idx, col: str = 'close', s
     """
     dfv = df_indices(indices, col, start).interpolate(method='zero', axis=0)
     return dfv.diff() / dfv
+
+
+def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01') -> pd.DataFrame:
+    """
+    Returns a dataframe with the relative cumulative change since start.
+    :param indices: iterable of indices, default Idx
+    :param col: which column should be merged in the final frame.
+                one of ['close', 'open', 'high', 'low', 'volume', 'change']
+    :param start: start date
+    :return: DataFrame with date index, relative cumulative change since start
+    """
+    dfi = df_indices(indices, col, start).interpolate(method='zero', axis=0)
+    strt = dfi.index[dfi.index.get_loc(pd.to_datetime(start), method='nearest')].strftime('%Y-%m-%d')
+    df_change = dfi.loc[strt:].diff().cumsum()
+    df = df_change / dfi.loc[strt]
+    df.iloc[0] = 0
+    return df
+

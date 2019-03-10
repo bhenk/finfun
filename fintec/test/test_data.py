@@ -65,6 +65,7 @@ class TestData(unittest.TestCase):
         self.assertListEqual(list(df.columns), ['AEX', 'DOW'])
         # print(df)
 
+    @unittest.SkipTest
     def test_logging_indices(self):
         ft.debug(ft.df_indices, [ft.Idx.AEX, ft.Idx.DOW], col='high')
         print('\nstop logging level debug')
@@ -78,11 +79,17 @@ class TestData(unittest.TestCase):
     def test_df_indices_abs_change(self):
         df = ft.df_indices_abs_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
         self.assertIsInstance(df.index, pd.DatetimeIndex)
-        print(df)
+        #print(df)
 
     def test_df_indices_rel_change(self):
         df = ft.df_indices_rel_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
-        print(df)
+        self.assertIsInstance(df.index, pd.DatetimeIndex)
+        #print(df)
+
+    def test_indices_change(self):
+        df = ft.df_indices_change([ft.Idx.AEX, ft.Idx.DOW], start='2018-12-23')
+        self.assertIsInstance(df.index, pd.DatetimeIndex)
+        #print(df)
 
 
 class TestIdx(unittest.TestCase):

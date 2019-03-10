@@ -10,3 +10,4 @@ __release_date__ = version.__release_date__
 #
 from fintec.styling import *
 from fintec.data import *
+from fintec.calc import *
