@@ -12,12 +12,9 @@ import numpy as np
 import pandas as pd
 import requests
 
-from fintec import styling
-
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
-           'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices',
-           'df_index', 'df_indices', 'df_indices_abs_change', 'df_indices_rel_change', 'df_indices_change']
+           'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices', 'df_index', 'df_indices']
 
 
 _log = logging.getLogger(__name__)
@@ -317,50 +314,3 @@ def df_indices(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str =
     dti = dfm.index[dfm.index.get_loc(dt, method='nearest')]
     strt = '{0:%Y-%m-%d}'.format(dti)
     return dfm.loc[strt:]
-
-
-def df_indices_abs_change(indices: Union[iter, Idx] = Idx, col: str = 'close',
-                          start: str = '2017-01-01') -> pd.DataFrame:
-    """
-    Returns a dataframe with the absolute daily change of indices.
-
-    :param indices: iterable of indices, default Idx
-    :param col: which column should be merged in the final frame.
-                one of ['close', 'open', 'high', 'low', 'volume', 'change']
-    :param start: start date
-    :return: DataFrame with date index, absolute daily change of indices
-    """
-    return df_indices(indices, col, start).interpolate(method='zero', axis=0).diff()
-
-
-def df_indices_rel_change(indices: Union[iter, Idx] = Idx, col: str = 'close',
-                          start: str = '2017-01-01') -> pd.DataFrame:
-    """
-    Returns a dataframe with the relative daily change of indices.
-
-    :param indices: iterable of indices, default Idx
-    :param col: which column should be merged in the final frame.
-                one of ['close', 'open', 'high', 'low', 'volume', 'change']
-    :param start: start date
-    :return: DataFrame with date index, relative daily change of indices
-    """
-    dfv = df_indices(indices, col, start).interpolate(method='zero', axis=0)
-    return dfv.diff() / dfv
-
-
-def df_indices_change(indices: Union[iter, Idx] = Idx, col: str = 'close', start: str = '2017-01-01') -> pd.DataFrame:
-    """
-    Returns a dataframe with the relative cumulative change since start.
-    :param indices: iterable of indices, default Idx
-    :param col: which column should be merged in the final frame.
-                one of ['close', 'open', 'high', 'low', 'volume', 'change']
-    :param start: start date
-    :return: DataFrame with date index, relative cumulative change since start
-    """
-    dfi = df_indices(indices, col, start).interpolate(method='zero', axis=0)
-    strt = dfi.index[dfi.index.get_loc(pd.to_datetime(start), method='nearest')].strftime('%Y-%m-%d')
-    df_change = dfi.loc[strt:].diff().cumsum()
-    df = df_change / dfi.loc[strt]
-    df.iloc[0] = 0
-    return df
-
