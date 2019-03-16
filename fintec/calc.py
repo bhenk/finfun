@@ -10,6 +10,8 @@ from IPython.core.display import display
 from plotly.offline import iplot
 import ipywidgets as widgets
 
+from fintec import currency
+
 __all__ = ['clamp', 'ValueFrame']
 
 
@@ -42,6 +44,27 @@ class ValueFrame(object):
             dfx = [dfx]
         for dfi in dfx:
             self.df = pd.merge(self.df, dfi.sort_index(), how='outer', left_index=True, right_index=True)
+
+    def tail_abs(self, tail=2):
+        currency(self.df.tail(tail))
+
+    def display_tail_abs(self):
+        ia_tail = widgets.IntSlider(
+            value=2,
+            min=1,
+            max=20,
+            step=1,
+            description='Tail:',
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        controls = {'tail': ia_tail}
+        ui = widgets.HBox([ia_tail])
+        out = widgets.interactive_output(self.tail_abs, controls)
+        display(ui, out)
 
     def first_index(self, as_string: bool = True) -> Union[str, pd.Timestamp]:
         start = self.df.index[0]
