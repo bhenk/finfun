@@ -18,7 +18,7 @@ from fintec.styling import info
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
            'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices', 'df_index', 'df_indices',
-           'display_update_indices']
+           'display_initiate_indices', 'display_update_indices']
 
 
 _log = logging.getLogger(__name__)
@@ -259,6 +259,19 @@ def initiate_indices(indices: Union[iter, Idx] = Idx, table_index: int = 0):
         indices = [indices]
     for idx in indices:
         initiate_index(idx, table_index=table_index)
+
+
+def display_initiate_indices():
+    def on_button_initiate_indices_clicked(b):
+        b_update.description = 'initiating...'
+        with out:
+            info(initiate_indices)
+        b_update.description = 'initiated'
+
+    b_update = widgets.Button(description='Initiate indices')
+    out = widgets.Output()
+    b_update.on_click(on_button_initiate_indices_clicked)
+    display(widgets.VBox([b_update, out]))
 
 
 def __convert_volume__(v: str) -> float:
