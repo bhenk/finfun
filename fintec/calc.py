@@ -48,23 +48,8 @@ class ValueFrame(object):
     def tail_abs(self, tail=2):
         return self.df.tail(tail)
 
-    def display_tail_abs(self):
-        ia_tail = widgets.IntSlider(
-            value=2,
-            min=1,
-            max=20,
-            step=1,
-            description='Tail:',
-            disabled=False,
-            continuous_update=False,
-            orientation='horizontal',
-            readout=True,
-            readout_format='d'
-        )
-        controls = {'tail': ia_tail}
-        ui = widgets.HBox([ia_tail])
-        out = widgets.interactive_output(self.tail_abs, controls)
-        display(ui, out)
+    def display_tail_abs(self, tail=2):
+        currency(self.tail_abs(tail))
 
     def first_index(self, as_string: bool = True) -> Union[str, pd.Timestamp]:
         start = self.df.index[0]
