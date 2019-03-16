@@ -49,7 +49,7 @@ class ValueFrame(object):
         return self.df.tail(tail)
 
     def display_tail_abs(self, tail=2):
-        currency(self.tail_abs(tail))
+        display(currency(self.tail_abs(tail)))
 
     def first_index(self, as_string: bool = True) -> Union[str, pd.Timestamp]:
         start = self.df.index[0]
