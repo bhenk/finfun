@@ -46,7 +46,7 @@ class ValueFrame(object):
             self.df = pd.merge(self.df, dfi.sort_index(), how='outer', left_index=True, right_index=True)
 
     def tail_abs(self, tail=2):
-        currency(self.df.tail(tail))
+        return self.df.tail(tail)
 
     def display_tail_abs(self):
         ia_tail = widgets.IntSlider(
