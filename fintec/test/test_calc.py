@@ -93,6 +93,8 @@ class TestValueFrame(unittest.TestCase):
         self.assertEqual(df.DOW['2019-01-18'], df.DOW['2019-01-21'])
         # print(df)
 
-    def test_scatter_rel_change(self):
+    def test_display_rel_change(self):
         vf = ft.ValueFrame(ft.df_indices([ft.Idx.AEX, ft.Idx.DOW]))
-        vf.scatter_rel_change()
+        vf.display_rel_change()
+
+

@@ -6,7 +6,9 @@ from typing import Union, Sequence
 
 import pandas as pd
 import plotly.graph_objs as go
+from IPython.core.display import display
 from plotly.offline import iplot
+import ipywidgets as widgets
 
 __all__ = ['ValueFrame']
 
@@ -89,7 +91,7 @@ class ValueFrame(object):
         df.iloc[0] = 0
         return df
 
-    def scatter_rel_change(self, start='2017-01-04'):
+    def scatter_rel_change(self, start='2017-01-04', tick_format='.01%', height=700):
         df = self.rel_change(start=start)
         data = []
         for column in df.columns:
@@ -101,9 +103,16 @@ class ValueFrame(object):
             data.append(trace)
         layout = go.Layout(
             yaxis=dict(
-                tickformat='.01%'
+                tickformat=tick_format
             ),
-            height=700,
+            height=height,
         )
         fig = go.Figure(data=data, layout=layout)
         iplot(fig)
+
+    def display_rel_change(self, start='2017-01-04'):
+        start = pd.Timestamp.today() - pd.DateOffset(days=400)
+        date = widgets.DatePicker(description='Start Date', value=start)
+        ui = widgets.HBox([date])
+        out = widgets.interactive_output(self.scatter_rel_change, {'start': date})
+        display(ui, out)
