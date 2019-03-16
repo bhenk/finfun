@@ -49,7 +49,7 @@ class ValueFrame(object):
         return self.df.tail(tail)
 
     def display_tail_abs(self, tail=2):
-        display(currency(self.tail_abs(tail)))
+        display(currency(self.tail_abs(tail), 2))
 
     def first_index(self, as_string: bool = True) -> Union[str, pd.Timestamp]:
         start = self.df.index[0]
@@ -153,4 +153,4 @@ class ValueFrame(object):
         controls = {'start': ia_start, 'height': ia_height, 'decimals': ia_decimals}
         ui = widgets.HBox([ia_start, ia_height, ia_decimals])
         out = widgets.interactive_output(self.scatter_rel_change, controls)
-        display(ui, out)
+        display(ui, out, self.rel_change())
