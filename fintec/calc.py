@@ -153,4 +153,4 @@ class ValueFrame(object):
         controls = {'start': ia_start, 'height': ia_height, 'decimals': ia_decimals}
         ui = widgets.HBox([ia_start, ia_height, ia_decimals])
         out = widgets.interactive_output(self.scatter_rel_change, controls)
-        display(ui, out, self.rel_change())
+        display(ui, out, self.rel_change(start=ia_start.value))
