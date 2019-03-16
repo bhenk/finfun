@@ -10,7 +10,11 @@ from IPython.core.display import display
 from plotly.offline import iplot
 import ipywidgets as widgets
 
-__all__ = ['ValueFrame']
+__all__ = ['clamp', 'ValueFrame']
+
+
+def clamp(n, minn, maxn):
+    return max(min(maxn, n), minn)
 
 
 class ValueFrame(object):
@@ -91,8 +95,9 @@ class ValueFrame(object):
         df.iloc[0] = 0
         return df
 
-    def scatter_rel_change(self, start='2017-01-04', tick_format='.01%', height=700):
+    def scatter_rel_change(self, start='2017-01-04', height=700, decimals=1):
         df = self.rel_change(start=start)
+        tick_format = '.0{}%'.format(clamp(decimals, 0, 3))
         data = []
         for column in df.columns:
             trace = go.Scatter(
@@ -110,9 +115,34 @@ class ValueFrame(object):
         fig = go.Figure(data=data, layout=layout)
         iplot(fig)
 
-    def display_rel_change(self, start='2017-01-04'):
+    def display_rel_change(self):
         start = pd.Timestamp.today() - pd.DateOffset(days=400)
-        date = widgets.DatePicker(description='Start Date', value=start)
-        ui = widgets.HBox([date])
-        out = widgets.interactive_output(self.scatter_rel_change, {'start': date})
+        ia_start = widgets.DatePicker(description='Start Date', value=start)
+        ia_height = widgets.IntSlider(
+            value=700,
+            min=200,
+            max=1000,
+            step=100,
+            description='Height:',
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        ia_decimals = widgets.IntSlider(
+            value=1,
+            min=0,
+            max=3,
+            step=1,
+            description='Decimals:',
+            disabled=False,
+            continuous_update=False,
+            orientation='horizontal',
+            readout=True,
+            readout_format='d'
+        )
+        controls = {'start': ia_start, 'height': ia_height, 'decimals': ia_decimals}
+        ui = widgets.HBox([ia_start, ia_height, ia_decimals])
+        out = widgets.interactive_output(self.scatter_rel_change, controls)
         display(ui, out)

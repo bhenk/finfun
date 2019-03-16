@@ -8,6 +8,14 @@ import pandas as pd
 import fintec as ft
 
 
+class TestCalc(unittest.TestCase):
+
+    def test_clamp(self):
+        self.assertEqual(5, ft.clamp(5, 0, 10))
+        self.assertEqual(0, ft.clamp(-1, 0, 10))
+        self.assertEqual(10, ft.clamp(11, 0, 10))
+
+
 class TestValueFrame(unittest.TestCase):
 
     # @classmethod
