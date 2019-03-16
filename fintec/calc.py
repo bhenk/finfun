@@ -10,7 +10,7 @@ from IPython.core.display import display
 from plotly.offline import iplot
 import ipywidgets as widgets
 
-from fintec import currency
+from fintec import currency, percentage
 
 __all__ = ['clamp', 'ValueFrame']
 
@@ -153,4 +153,4 @@ class ValueFrame(object):
         controls = {'start': ia_start, 'height': ia_height, 'decimals': ia_decimals}
         ui = widgets.HBox([ia_start, ia_height, ia_decimals])
         out = widgets.interactive_output(self.scatter_rel_change, controls)
-        display(ui, out, self.rel_change(start=ia_start.value))
+        display(ui, out, percentage(self.rel_change(start=ia_start.value).tail(3)))
