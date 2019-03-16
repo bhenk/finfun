@@ -5,6 +5,8 @@
 from typing import Union, Sequence
 
 import pandas as pd
+import plotly.graph_objs as go
+from plotly.offline import iplot
 
 __all__ = ['ValueFrame']
 
@@ -86,3 +88,22 @@ class ValueFrame(object):
         df = df_change / dfs.iloc[0]
         df.iloc[0] = 0
         return df
+
+    def scatter_rel_change(self, start='2017-01-04'):
+        df = self.rel_change(start=start)
+        data = []
+        for column in df.columns:
+            trace = go.Scatter(
+                x=df.index,
+                y=df[column],
+                name=column,
+            )
+            data.append(trace)
+        layout = go.Layout(
+            yaxis=dict(
+                tickformat='.01%'
+            ),
+            height=700,
+        )
+        fig = go.Figure(data=data, layout=layout)
+        iplot(fig)
