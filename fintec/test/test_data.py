@@ -76,6 +76,9 @@ class TestData(unittest.TestCase):
         ft.df_indices([ft.Idx.AEX, ft.Idx.DOW])
         print('end of function')
 
+    def test_display_update_indices(self):
+        ft.display_update_indices()
+
 
 class TestIdx(unittest.TestCase):
 

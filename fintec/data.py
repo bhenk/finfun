@@ -11,10 +11,14 @@ from typing import Union, Sequence, Iterable
 import numpy as np
 import pandas as pd
 import requests
+import ipywidgets as widgets
+from IPython.core.display import display
+from fintec.styling import info
 
 __all__ = ['U_FIN_DATA_BASE',
            'df_rates',
-           'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices', 'df_index', 'df_indices']
+           'Idx', 'update_index', 'update_indices', 'initiate_index', 'initiate_indices', 'df_index', 'df_indices',
+           'display_update_indices']
 
 
 _log = logging.getLogger(__name__)
@@ -200,6 +204,19 @@ def update_indices(indices: Union[iter, Idx] = Idx, table_index: int = 1):
         indices = [indices]
     for idx in indices:
         update_index(idx, table_index)
+
+
+def display_update_indices():
+    def on_button_update_indices_clicked(b):
+        b_update.description = 'updating...'
+        with out:
+            info(update_indices)
+        b_update.description = 'updated'
+
+    b_update = widgets.Button(description='Update indices')
+    out = widgets.Output()
+    b_update.on_click(on_button_update_indices_clicked)
+    display(widgets.VBox([b_update, out]))
 
 
 def initiate_index(idx: Idx, table_index: int = 0) -> pd.DataFrame:
