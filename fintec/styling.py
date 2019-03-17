@@ -155,6 +155,20 @@ def color_negative_red(val) -> str:
     return 'color: {}'.format(color)
 
 
+def highlight_max(data, color='yellow'):
+    '''
+    highlight the maximum in a Series or DataFrame
+    '''
+    attr = 'background-color: {}'.format(color)
+    if data.ndim == 1:  # Series from .apply(axis=0) or axis=1
+        is_max = data == data.max()
+        return [attr if v else '' for v in is_max]
+    else:  # from .apply(axis=None)
+        is_max = data == data.max().max()
+        return pd.DataFrame(np.where(is_max, attr, ''),
+                            index=data.index, columns=data.columns)
+
+
 def _eu_format(number_string: str) -> str:
     return number_string.replace(',', 'x').replace('.', ',').replace('x', '.')
 
@@ -193,7 +207,9 @@ def currency(df: pd.DataFrame, decimals=0):
     """
     return pd.DataFrame(df, index=df.index.strftime("%Y-%m-%d")).style \
         .format(lambda x: c_format(x, decimals)) \
-        .applymap(color_negative_red)
+        .applymap(color_negative_red) \
+        .apply(highlight_max, axis=1)
+
 
 
 def percentage(df: pd.DataFrame, decimals=2):

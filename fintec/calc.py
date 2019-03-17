@@ -123,7 +123,7 @@ class ValueFrame(object):
         fig = go.Figure(data=data, layout=layout)
         iplot(fig)
 
-    def display_rel_change(self, minus_days=400):
+    def display_rel_change(self, minus_days=365):
         start = pd.Timestamp.today() - pd.DateOffset(days=minus_days)
         ia_start = widgets.DatePicker(description='Start Date', value=start)
         ia_height = widgets.IntSlider(
