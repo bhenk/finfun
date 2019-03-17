@@ -207,9 +207,7 @@ def currency(df: pd.DataFrame, decimals=0):
     """
     return pd.DataFrame(df, index=df.index.strftime("%Y-%m-%d")).style \
         .format(lambda x: c_format(x, decimals)) \
-        .applymap(color_negative_red) \
-        .apply(highlight_max, axis=1)
-
+        .applymap(color_negative_red)
 
 
 def percentage(df: pd.DataFrame, decimals=2):
@@ -222,4 +220,5 @@ def percentage(df: pd.DataFrame, decimals=2):
     """
     return pd.DataFrame(df, index=df.index.strftime("%Y-%m-%d")).style \
         .format(lambda x: p_format(x, decimals)) \
-        .applymap(color_negative_red)
+        .applymap(color_negative_red) \
+        .apply(highlight_max, axis=1)
